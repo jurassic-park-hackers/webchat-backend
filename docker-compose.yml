@@ -3,14 +3,42 @@ version: "3"
 services:
     db:
       image: postgres:9.6.3-alpine
-    web:
-      build: .
-      command: mix phoenix.server
-      environment:
-        - MIX_ENV=dev
       volumes:
-        - .:/app
+        - ./postgres-data:/var/lib/postgresql/data
       ports:
-        - "4000:4000"
+        - "5432:5432"  
+      networks:
+        - webnet
+      deploy:
+        placement:
+          constraints: [node.role == manager]
+    web:
+      image: gabriellima/webchat
+      deploy:
+        replicas: 4
+        restart_policy:
+          condition: on-failure
+        resources:
+          limits:
+            cpus: "0.25"
+            memory: 1024M
+      command: mix phoenix.server
+      ports:
+        - "80:4000"  
+      networks:
+        - webnet
       depends_on:
         - db
+    visualizer:
+      image: dockersamples/visualizer:stable
+      ports:
+        - "4000:8080"
+      volumes:
+        - "/var/run/docker.sock:/var/run/docker.sock"
+      deploy:
+        placement:
+          constraints: [node.role == manager]
+      networks:
+        - webnet
+networks:
+  webnet:
