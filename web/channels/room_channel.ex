@@ -12,6 +12,7 @@ defmodule PhoenixChat.RoomChannel do
       online_at: :os.system_time(:millisecond)
     })
     push socket, "presence_state", Presence.list(socket)
+
     {:noreply, socket}
   end
 
@@ -21,6 +22,7 @@ defmodule PhoenixChat.RoomChannel do
       body: message,
       timestamp: :os.system_time(:millisecond)
     }
+
     {:noreply, socket}
   end
 end
