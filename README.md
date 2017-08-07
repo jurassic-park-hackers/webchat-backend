@@ -20,3 +20,9 @@ $ npm install
 $ mix ecto.create
 $ mix phoenix.server
 ```
+
+## Docker
+```
+$ docker-compose run web bash -c "mix do deps.get, deps.compile, ecto.create && npm install"
+# docker-compose up
+```
